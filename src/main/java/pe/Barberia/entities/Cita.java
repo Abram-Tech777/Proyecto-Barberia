@@ -1,11 +1,7 @@
 package pe.Barberia.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import pe.Barberia.enums.EstadoCita;
 import pe.Barberia.enums.TipoPago;
 
@@ -14,9 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "citas")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Cita {
 
     @Id
@@ -25,7 +18,6 @@ public class Cita {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "barbero_id", nullable = false)
-    @JsonBackReference
     private Barbero barbero;
 
     @Column(nullable = false)

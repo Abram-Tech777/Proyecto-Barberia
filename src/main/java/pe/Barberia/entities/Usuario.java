@@ -1,12 +1,8 @@
 package pe.Barberia.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import pe.Barberia.enums.ProveedorAutenticacion;
+import pe.Barberia.enums.TipoRegistro;
 import pe.Barberia.enums.Rol;
 
 import java.util.ArrayList;
@@ -15,9 +11,6 @@ import java.util.List;
 @Entity
 @Table(name = "usuarios")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Usuario {
 
     @Id
@@ -41,18 +34,17 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ProveedorAutenticacion proveedorAutenticacion;
+    private TipoRegistro tipoRegistro;
 
     @Column(unique = true)
-    private String proveedorId;
+    private String idGoogle;
 
     @Column(nullable = false)
-    private boolean preferenciasMarketing;
+    private boolean recibirPromociones;
 
     @Column(nullable = false)
     private boolean activo;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<DireccionEnvio> direcciones = new ArrayList<>();
 }

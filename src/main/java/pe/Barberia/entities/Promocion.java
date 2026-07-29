@@ -1,11 +1,7 @@
 package pe.Barberia.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,9 +9,6 @@ import java.util.List;
 @Entity
 @Table(name = "promociones")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Promocion {
 
     @Id
@@ -42,7 +35,6 @@ public class Promocion {
             joinColumns = @JoinColumn(name = "promocion_id"),
             inverseJoinColumns = @JoinColumn(name = "servicio_id")
     )
-    @JsonManagedReference
     private List<Servicio> servicios;
 
     @ManyToMany
@@ -51,6 +43,5 @@ public class Promocion {
             joinColumns = @JoinColumn(name = "promocion_id"),
             inverseJoinColumns = @JoinColumn(name = "producto_id")
     )
-    @JsonManagedReference
     private List<Producto> productos;
 }

@@ -1,10 +1,7 @@
 package pe.Barberia.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import pe.Barberia.enums.EstadoDevolucion;
 
 import java.time.LocalDateTime;
@@ -12,9 +9,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "devoluciones")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Devolucion {
 
     @Id

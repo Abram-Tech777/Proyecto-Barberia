@@ -1,11 +1,7 @@
 package pe.Barberia.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import pe.Barberia.enums.EstadoPedido;
 import pe.Barberia.enums.MedioPago;
 import pe.Barberia.enums.OrigenOrden;
@@ -17,9 +13,6 @@ import java.util.List;
 @Entity
 @Table(name = "ventas")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Venta {
 
     @Id
@@ -67,6 +60,5 @@ public class Venta {
     private EstadoPedido estadoPedido;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<DetalleVenta> detalles;
 }

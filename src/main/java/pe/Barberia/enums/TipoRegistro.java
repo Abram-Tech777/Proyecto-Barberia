@@ -1,6 +1,6 @@
 package pe.Barberia.enums;
 
-public enum ProveedorAutenticacion {
+public enum TipoRegistro {
     LOCAL,
     GOOGLE
 }

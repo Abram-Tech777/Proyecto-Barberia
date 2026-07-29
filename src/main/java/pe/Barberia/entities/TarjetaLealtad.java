@@ -1,17 +1,11 @@
 package pe.Barberia.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tarjetas_lealtad")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class TarjetaLealtad {
 
     @Id

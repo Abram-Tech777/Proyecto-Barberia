@@ -1,18 +1,11 @@
 package pe.Barberia.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "detalles_venta")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class DetalleVenta {
 
     @Id
@@ -21,7 +14,6 @@ public class DetalleVenta {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "venta_id", nullable = false)
-    @JsonBackReference
     private Venta venta;
 
     @ManyToOne(fetch = FetchType.LAZY)
