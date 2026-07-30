@@ -34,7 +34,7 @@ public class ServicioController {
         return ResponseEntity.ok(servicioService.buscarPorNombre(nombre));
     }
 
-    @PostMapping
+    @PostMapping("/agregar")
     public ResponseEntity<Servicio> registrar(@RequestBody Servicio servicio) {
         return ResponseEntity.ok(servicioService.registrar(servicio));
     }

@@ -1,6 +1,11 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
+import pe.Barberia.entities.Cita;
+import pe.Barberia.entities.DireccionEnvio;
+import pe.Barberia.entities.Usuario;
 import pe.Barberia.entities.Venta;
 import pe.Barberia.enums.EstadoPedido;
 import pe.Barberia.repositories.VentaRepository;
@@ -13,6 +18,9 @@ import java.util.Optional;
 public class VentaService {
 
     private final VentaRepository ventaRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public VentaService(VentaRepository ventaRepository) {
         this.ventaRepository = ventaRepository;
@@ -27,18 +35,36 @@ public class VentaService {
     }
 
     public List<Venta> listarPorComprador(Long compradorId) {
-        return ventaRepository.findByCompradorId(compradorId);
+        return em.createQuery("SELECT v FROM Venta v WHERE v.comprador.id = :id", Venta.class)
+                .setParameter("id", compradorId)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public List<Venta> listarPorCita(Long citaId) {
-        return ventaRepository.findByCitaAsociadaId(citaId);
+        return em.createQuery("SELECT v FROM Venta v WHERE v.citaAsociada.id = :id", Venta.class)
+                .setParameter("id", citaId)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public List<Venta> listarPorEstado(EstadoPedido estadoPedido) {
-        return ventaRepository.findByEstadoPedido(estadoPedido);
+        return em.createQuery("SELECT v FROM Venta v WHERE v.estadoPedido = :est", Venta.class)
+                .setParameter("est", estadoPedido)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public Venta registrar(Venta venta) {
+        if (venta.getComprador() != null) {
+            venta.setComprador(em.getReference(Usuario.class, venta.getComprador().getId()));
+        }
+        if (venta.getCitaAsociada() != null) {
+            venta.setCitaAsociada(em.getReference(Cita.class, venta.getCitaAsociada().getId()));
+        }
+        if (venta.getDireccionEnvio() != null) {
+            venta.setDireccionEnvio(em.getReference(DireccionEnvio.class, venta.getDireccionEnvio().getId()));
+        }
         venta.setFechaTransaccion(LocalDateTime.now());
         return ventaRepository.save(venta);
     }

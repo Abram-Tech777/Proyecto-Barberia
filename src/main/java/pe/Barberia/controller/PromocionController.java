@@ -40,7 +40,7 @@ public class PromocionController {
         return ResponseEntity.ok(promocionService.listarVigentes(fecha));
     }
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<Promocion> registrar(@RequestBody Promocion promocion) {
         return ResponseEntity.ok(promocionService.registrar(promocion));
     }

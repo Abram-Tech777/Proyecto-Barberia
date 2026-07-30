@@ -1,5 +1,7 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import pe.Barberia.entities.Usuario;
 import pe.Barberia.repositories.UsuarioRepository;
@@ -11,6 +13,9 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -51,7 +56,12 @@ public class UsuarioService {
     }
 
     public Optional<Usuario> login(String email, String contrasenia) {
-        return usuarioRepository.findByEmail(email)
-                .filter(u -> u.getContrasenia().equals(contrasenia));
+        List<Usuario> resultados = em.createQuery(
+                "SELECT u FROM Usuario u WHERE u.email = :email", Usuario.class)
+                .setParameter("email", email)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
+        return resultados.isEmpty() ? Optional.empty() :
+                resultados.stream().filter(u -> u.getContrasenia().equals(contrasenia)).findFirst();
     }
 }

@@ -45,7 +45,7 @@ public class VentaController {
         return ResponseEntity.ok(ventaService.listarPorEstado(estadoPedido));
     }
 
-    @PostMapping
+    @PostMapping("/registrar")
     public ResponseEntity<Venta> registrar(@RequestBody Venta venta) {
         return ResponseEntity.ok(ventaService.registrar(venta));
     }

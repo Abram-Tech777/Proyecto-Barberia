@@ -1,5 +1,7 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import pe.Barberia.entities.Servicio;
 import pe.Barberia.repositories.ServicioRepository;
@@ -11,6 +13,9 @@ import java.util.Optional;
 public class ServicioService {
 
     private final ServicioRepository servicioRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public ServicioService(ServicioRepository servicioRepository) {
         this.servicioRepository = servicioRepository;
@@ -25,7 +30,11 @@ public class ServicioService {
     }
 
     public List<Servicio> buscarPorNombre(String nombre) {
-        return servicioRepository.findByNombreContainingIgnoreCase(nombre);
+        return em.createQuery(
+                "SELECT s FROM Servicio s WHERE UPPER(s.nombre) LIKE UPPER(CONCAT('%', :nom, '%'))", Servicio.class)
+                .setParameter("nom", nombre)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public Servicio registrar(Servicio servicio) {

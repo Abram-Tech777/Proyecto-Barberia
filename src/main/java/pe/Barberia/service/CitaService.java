@@ -1,6 +1,9 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
+import pe.Barberia.entities.Barbero;
 import pe.Barberia.entities.Cita;
 import pe.Barberia.enums.EstadoCita;
 import pe.Barberia.repositories.CitaRepository;
@@ -13,6 +16,9 @@ import java.util.Optional;
 public class CitaService {
 
     private final CitaRepository citaRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public CitaService(CitaRepository citaRepository) {
         this.citaRepository = citaRepository;
@@ -27,18 +33,30 @@ public class CitaService {
     }
 
     public List<Cita> listarPorBarbero(Long barberoId) {
-        return citaRepository.findByBarberoId(barberoId);
+        return em.createQuery("SELECT c FROM Cita c WHERE c.barbero.id = :id", Cita.class)
+                .setParameter("id", barberoId)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public List<Cita> listarPorCelular(String celular) {
-        return citaRepository.findByCelularCliente(celular);
+        return em.createQuery("SELECT c FROM Cita c WHERE c.celularCliente = :cel", Cita.class)
+                .setParameter("cel", celular)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public List<Cita> listarPendientesValidar() {
-        return citaRepository.findByEstado(EstadoCita.PENDIENTE_VALIDAR);
+        return em.createQuery("SELECT c FROM Cita c WHERE c.estado = :est", Cita.class)
+                .setParameter("est", EstadoCita.PENDIENTE_VALIDAR)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public Cita registrar(Cita cita) {
+        if (cita.getBarbero() != null) {
+            cita.setBarbero(em.getReference(Barbero.class, cita.getBarbero().getId()));
+        }
         cita.setFechaCreacion(LocalDateTime.now());
         cita.setEstado(EstadoCita.PENDIENTE_VALIDAR);
         return citaRepository.save(cita);
@@ -71,8 +89,12 @@ public class CitaService {
 
     public int cancelarSpam() {
         LocalDateTime hace15Minutos = LocalDateTime.now().minusMinutes(15);
-        List<Cita> citasSpam = citaRepository
-                .findByEstadoAndFechaCreacionBefore(EstadoCita.PENDIENTE_VALIDAR, hace15Minutos);
+        List<Cita> citasSpam = em.createQuery(
+                "SELECT c FROM Cita c WHERE c.estado = :est AND c.fechaCreacion < :limite", Cita.class)
+                .setParameter("est", EstadoCita.PENDIENTE_VALIDAR)
+                .setParameter("limite", hace15Minutos)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
         for (Cita cita : citasSpam) {
             cita.setEstado(EstadoCita.CANCELADA);
         }

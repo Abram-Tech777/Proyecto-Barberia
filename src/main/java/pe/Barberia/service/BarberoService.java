@@ -1,7 +1,10 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import pe.Barberia.entities.Barbero;
+import pe.Barberia.entities.Usuario;
 import pe.Barberia.repositories.BarberoRepository;
 
 import java.util.List;
@@ -12,6 +15,9 @@ public class BarberoService {
 
     private final BarberoRepository barberoRepository;
 
+    @PersistenceContext
+    private EntityManager em;
+
     public BarberoService(BarberoRepository barberoRepository) {
         this.barberoRepository = barberoRepository;
     }
@@ -21,7 +27,9 @@ public class BarberoService {
     }
 
     public List<Barbero> listarActivos() {
-        return barberoRepository.findByActivoTrue();
+        return em.createQuery("SELECT b FROM Barbero b WHERE b.activo = true", Barbero.class)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public Optional<Barbero> buscarPorId(Long id) {
@@ -29,6 +37,9 @@ public class BarberoService {
     }
 
     public Barbero registrar(Barbero barbero) {
+        if (barbero.getUsuario() != null) {
+            barbero.setUsuario(em.getReference(Usuario.class, barbero.getUsuario().getId()));
+        }
         return barberoRepository.save(barbero);
     }
 

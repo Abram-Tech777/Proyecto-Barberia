@@ -39,7 +39,7 @@ public class ReseniaController {
         return ResponseEntity.ok(reseniaService.listarPorProducto(productoId));
     }
 
-    @PostMapping
+    @PostMapping("/agregar")
     public ResponseEntity<Resenia> registrar(@RequestBody Resenia resenia) {
         return ResponseEntity.ok(reseniaService.registrar(resenia));
     }

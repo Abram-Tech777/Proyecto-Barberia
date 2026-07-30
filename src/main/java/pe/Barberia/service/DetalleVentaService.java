@@ -1,7 +1,11 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import pe.Barberia.entities.DetalleVenta;
+import pe.Barberia.entities.Producto;
+import pe.Barberia.entities.Venta;
 import pe.Barberia.repositories.DetalleVentaRepository;
 
 import java.util.List;
@@ -11,6 +15,9 @@ import java.util.Optional;
 public class DetalleVentaService {
 
     private final DetalleVentaRepository detalleVentaRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public DetalleVentaService(DetalleVentaRepository detalleVentaRepository) {
         this.detalleVentaRepository = detalleVentaRepository;
@@ -25,10 +32,15 @@ public class DetalleVentaService {
     }
 
     public List<DetalleVenta> listarPorVenta(Long ventaId) {
-        return detalleVentaRepository.findByVentaId(ventaId);
+        return em.createQuery("SELECT d FROM DetalleVenta d WHERE d.venta.id = :id", DetalleVenta.class)
+                .setParameter("id", ventaId)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public DetalleVenta registrar(DetalleVenta detalleVenta) {
+        detalleVenta.setVenta(em.getReference(Venta.class, detalleVenta.getVenta().getId()));
+        detalleVenta.setProducto(em.getReference(Producto.class, detalleVenta.getProducto().getId()));
         return detalleVentaRepository.save(detalleVenta);
     }
 

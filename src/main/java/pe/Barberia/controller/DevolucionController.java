@@ -41,7 +41,7 @@ public class DevolucionController {
         return ResponseEntity.ok(devolucionService.listarPorCelular(celular));
     }
 
-    @PostMapping
+    @PostMapping("/registrar")
     public ResponseEntity<Devolucion> registrar(@RequestBody Devolucion devolucion) {
         return ResponseEntity.ok(devolucionService.registrar(devolucion));
     }

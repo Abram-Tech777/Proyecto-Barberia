@@ -1,5 +1,7 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import pe.Barberia.entities.TarjetaLealtad;
 import pe.Barberia.repositories.TarjetaLealtadRepository;
@@ -11,6 +13,9 @@ import java.util.Optional;
 public class TarjetaLealtadService {
 
     private final TarjetaLealtadRepository tarjetaLealtadRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public TarjetaLealtadService(TarjetaLealtadRepository tarjetaLealtadRepository) {
         this.tarjetaLealtadRepository = tarjetaLealtadRepository;
@@ -25,7 +30,12 @@ public class TarjetaLealtadService {
     }
 
     public Optional<TarjetaLealtad> buscarPorCelular(String celularCliente) {
-        return tarjetaLealtadRepository.findByCelularCliente(celularCliente);
+        List<TarjetaLealtad> resultados = em.createQuery(
+                "SELECT t FROM TarjetaLealtad t WHERE t.celularCliente = :cel", TarjetaLealtad.class)
+                .setParameter("cel", celularCliente)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
+        return resultados.isEmpty() ? Optional.empty() : Optional.of(resultados.get(0));
     }
 
     public TarjetaLealtad registrar(TarjetaLealtad tarjeta) {

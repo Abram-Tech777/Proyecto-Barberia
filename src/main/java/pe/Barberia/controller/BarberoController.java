@@ -34,7 +34,7 @@ public class BarberoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/registrar")
     public ResponseEntity<Barbero> registrar(@RequestBody Barbero barbero) {
         return ResponseEntity.ok(barberoService.registrar(barbero));
     }

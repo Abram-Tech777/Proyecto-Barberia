@@ -44,7 +44,7 @@ public class CitaController {
         return ResponseEntity.ok(citaService.listarPendientesValidar());
     }
 
-    @PostMapping
+    @PostMapping("/reservar")
     public ResponseEntity<Cita> registrar(@RequestBody Cita cita) {
         return ResponseEntity.ok(citaService.registrar(cita));
     }

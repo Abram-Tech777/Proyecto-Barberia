@@ -1,7 +1,10 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import pe.Barberia.entities.DireccionEnvio;
+import pe.Barberia.entities.Usuario;
 import pe.Barberia.repositories.DireccionEnvioRepository;
 
 import java.util.List;
@@ -11,6 +14,9 @@ import java.util.Optional;
 public class DireccionEnvioService {
 
     private final DireccionEnvioRepository direccionEnvioRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public DireccionEnvioService(DireccionEnvioRepository direccionEnvioRepository) {
         this.direccionEnvioRepository = direccionEnvioRepository;
@@ -25,10 +31,15 @@ public class DireccionEnvioService {
     }
 
     public List<DireccionEnvio> listarPorUsuario(Long usuarioId) {
-        return direccionEnvioRepository.findByUsuarioId(usuarioId);
+        return em.createQuery(
+                "SELECT d FROM DireccionEnvio d WHERE d.usuario.id = :id", DireccionEnvio.class)
+                .setParameter("id", usuarioId)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public DireccionEnvio registrar(DireccionEnvio direccionEnvio) {
+        direccionEnvio.setUsuario(em.getReference(Usuario.class, direccionEnvio.getUsuario().getId()));
         return direccionEnvioRepository.save(direccionEnvio);
     }
 

@@ -34,7 +34,7 @@ public class DireccionEnvioController {
         return ResponseEntity.ok(direccionEnvioService.listarPorUsuario(usuarioId));
     }
 
-    @PostMapping
+    @PostMapping("/agregar")
     public ResponseEntity<DireccionEnvio> registrar(@RequestBody DireccionEnvio direccionEnvio) {
         return ResponseEntity.ok(direccionEnvioService.registrar(direccionEnvio));
     }

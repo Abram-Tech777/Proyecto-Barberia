@@ -1,5 +1,7 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import pe.Barberia.entities.Promocion;
 import pe.Barberia.repositories.PromocionRepository;
@@ -12,6 +14,9 @@ import java.util.Optional;
 public class PromocionService {
 
     private final PromocionRepository promocionRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public PromocionService(PromocionRepository promocionRepository) {
         this.promocionRepository = promocionRepository;
@@ -26,11 +31,17 @@ public class PromocionService {
     }
 
     public List<Promocion> listarActivos() {
-        return promocionRepository.findByActivoTrue();
+        return em.createQuery("SELECT p FROM Promocion p WHERE p.activo = true", Promocion.class)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public List<Promocion> listarVigentes(LocalDate fecha) {
-        return promocionRepository.findByFechaInicioBeforeAndFechaFinAfter(fecha, fecha);
+        return em.createQuery(
+                "SELECT p FROM Promocion p WHERE p.fechaInicio <= :fecha AND p.fechaFin >= :fecha", Promocion.class)
+                .setParameter("fecha", fecha)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public Promocion registrar(Promocion promocion) {

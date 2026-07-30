@@ -1,5 +1,6 @@
 package pe.Barberia.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -35,6 +36,7 @@ public class Promocion {
             joinColumns = @JoinColumn(name = "promocion_id"),
             inverseJoinColumns = @JoinColumn(name = "servicio_id")
     )
+    @JsonIgnore
     private List<Servicio> servicios;
 
     @ManyToMany
@@ -43,5 +45,6 @@ public class Promocion {
             joinColumns = @JoinColumn(name = "promocion_id"),
             inverseJoinColumns = @JoinColumn(name = "producto_id")
     )
+    @JsonIgnore
     private List<Producto> productos;
 }

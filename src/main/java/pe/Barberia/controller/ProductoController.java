@@ -45,7 +45,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.listarStockBajo());
     }
 
-    @PostMapping
+    @PostMapping("/agregar")
     public ResponseEntity<Producto> registrar(@RequestBody Producto producto) {
         return ResponseEntity.ok(productoService.registrar(producto));
     }

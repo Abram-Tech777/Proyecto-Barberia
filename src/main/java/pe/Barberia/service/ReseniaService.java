@@ -1,7 +1,11 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
+import pe.Barberia.entities.Producto;
 import pe.Barberia.entities.Resenia;
+import pe.Barberia.entities.Usuario;
 import pe.Barberia.repositories.ReseniaRepository;
 
 import java.time.LocalDateTime;
@@ -12,6 +16,9 @@ import java.util.Optional;
 public class ReseniaService {
 
     private final ReseniaRepository reseniaRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public ReseniaService(ReseniaRepository reseniaRepository) {
         this.reseniaRepository = reseniaRepository;
@@ -26,14 +33,22 @@ public class ReseniaService {
     }
 
     public List<Resenia> listarPorProducto(Long productoId) {
-        return reseniaRepository.findByProductoId(productoId);
+        return em.createQuery("SELECT r FROM Resenia r WHERE r.producto.id = :id", Resenia.class)
+                .setParameter("id", productoId)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public List<Resenia> listarPorUsuario(Long usuarioId) {
-        return reseniaRepository.findByUsuarioId(usuarioId);
+        return em.createQuery("SELECT r FROM Resenia r WHERE r.usuario.id = :id", Resenia.class)
+                .setParameter("id", usuarioId)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public Resenia registrar(Resenia resenia) {
+        resenia.setProducto(em.getReference(Producto.class, resenia.getProducto().getId()));
+        resenia.setUsuario(em.getReference(Usuario.class, resenia.getUsuario().getId()));
         resenia.setFechaCreacion(LocalDateTime.now());
         return reseniaRepository.save(resenia);
     }

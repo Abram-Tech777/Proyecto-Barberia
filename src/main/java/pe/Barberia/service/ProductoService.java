@@ -1,5 +1,7 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import pe.Barberia.entities.Producto;
 import pe.Barberia.enums.CategoriaProducto;
@@ -12,6 +14,9 @@ import java.util.Optional;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public ProductoService(ProductoRepository productoRepository) {
         this.productoRepository = productoRepository;
@@ -26,15 +31,25 @@ public class ProductoService {
     }
 
     public List<Producto> buscarPorNombre(String nombre) {
-        return productoRepository.findByNombreContainingIgnoreCase(nombre);
+        return em.createQuery(
+                "SELECT p FROM Producto p WHERE UPPER(p.nombre) LIKE UPPER(CONCAT('%', :nom, '%'))", Producto.class)
+                .setParameter("nom", nombre)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public List<Producto> listarPorCategoria(CategoriaProducto categoria) {
-        return productoRepository.findByCategoria(categoria);
+        return em.createQuery("SELECT p FROM Producto p WHERE p.categoria = :cat", Producto.class)
+                .setParameter("cat", categoria)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public List<Producto> listarStockBajo() {
-        return productoRepository.findByStockLessThanEqual(5);
+        return em.createQuery(
+                "SELECT p FROM Producto p WHERE p.stock <= p.stockMinimo", Producto.class)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public Producto registrar(Producto producto) {

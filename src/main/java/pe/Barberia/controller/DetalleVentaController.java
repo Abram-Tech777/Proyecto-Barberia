@@ -34,7 +34,7 @@ public class DetalleVentaController {
         return ResponseEntity.ok(detalleVentaService.listarPorVenta(ventaId));
     }
 
-    @PostMapping
+    @PostMapping("/agregar")
     public ResponseEntity<DetalleVenta> registrar(@RequestBody DetalleVenta detalleVenta) {
         return ResponseEntity.ok(detalleVentaService.registrar(detalleVenta));
     }

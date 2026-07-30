@@ -36,7 +36,7 @@ public class TarjetaLealtadController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/registrar")
     public ResponseEntity<TarjetaLealtad> registrar(@RequestBody TarjetaLealtad tarjetaLealtad) {
         return ResponseEntity.ok(tarjetaLealtadService.registrar(tarjetaLealtad));
     }

@@ -1,6 +1,9 @@
 package pe.Barberia.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
+import pe.Barberia.entities.Cita;
 import pe.Barberia.entities.Devolucion;
 import pe.Barberia.repositories.DevolucionRepository;
 
@@ -12,6 +15,9 @@ import java.util.Optional;
 public class DevolucionService {
 
     private final DevolucionRepository devolucionRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public DevolucionService(DevolucionRepository devolucionRepository) {
         this.devolucionRepository = devolucionRepository;
@@ -26,14 +32,24 @@ public class DevolucionService {
     }
 
     public Optional<Devolucion> buscarPorCita(Long citaId) {
-        return devolucionRepository.findByCitaId(citaId);
+        List<Devolucion> resultados = em.createQuery(
+                "SELECT d FROM Devolucion d WHERE d.cita.id = :id", Devolucion.class)
+                .setParameter("id", citaId)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
+        return resultados.isEmpty() ? Optional.empty() : Optional.of(resultados.get(0));
     }
 
     public List<Devolucion> listarPorCelular(String celularCliente) {
-        return devolucionRepository.findByCelularCliente(celularCliente);
+        return em.createQuery(
+                "SELECT d FROM Devolucion d WHERE d.celularCliente = :cel", Devolucion.class)
+                .setParameter("cel", celularCliente)
+                .setHint("org.hibernate.fetchSize", 5)
+                .getResultList();
     }
 
     public Devolucion registrar(Devolucion devolucion) {
+        devolucion.setCita(em.getReference(Cita.class, devolucion.getCita().getId()));
         devolucion.setFechaRegistro(LocalDateTime.now());
         return devolucionRepository.save(devolucion);
     }
