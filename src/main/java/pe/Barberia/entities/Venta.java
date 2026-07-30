@@ -1,5 +1,6 @@
 package pe.Barberia.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import pe.Barberia.enums.EstadoPedido;
@@ -13,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "ventas")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Venta {
 
     @Id

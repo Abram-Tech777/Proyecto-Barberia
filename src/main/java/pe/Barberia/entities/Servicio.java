@@ -1,5 +1,6 @@
 package pe.Barberia.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "servicios")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Servicio {
 
     @Id

@@ -1,6 +1,6 @@
 package pe.Barberia.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,6 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "promociones")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Promocion {
 
     @Id
@@ -36,7 +37,7 @@ public class Promocion {
             joinColumns = @JoinColumn(name = "promocion_id"),
             inverseJoinColumns = @JoinColumn(name = "servicio_id")
     )
-    @JsonIgnore
+    @JsonIgnoreProperties("promociones")
     private List<Servicio> servicios;
 
     @ManyToMany
@@ -45,6 +46,6 @@ public class Promocion {
             joinColumns = @JoinColumn(name = "promocion_id"),
             inverseJoinColumns = @JoinColumn(name = "producto_id")
     )
-    @JsonIgnore
+    @JsonIgnoreProperties({"promociones", "resenias"})
     private List<Producto> productos;
 }

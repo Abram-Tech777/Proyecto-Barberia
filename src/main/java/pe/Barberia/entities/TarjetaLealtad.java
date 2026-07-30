@@ -1,11 +1,13 @@
 package pe.Barberia.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Table(name = "tarjetas_lealtad")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TarjetaLealtad {
 
     @Id

@@ -1,12 +1,13 @@
 package pe.Barberia.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Table(name = "detalles_venta")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class DetalleVenta {
 
     @Id
@@ -15,7 +16,7 @@ public class DetalleVenta {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "venta_id", nullable = false)
-    @JsonIgnore
+    @JsonIgnoreProperties("detalles")
     private Venta venta;
 
     @ManyToOne(fetch = FetchType.LAZY)
